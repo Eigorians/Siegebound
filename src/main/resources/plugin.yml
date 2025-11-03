@@ -8,10 +8,13 @@ description: Team-based siege battle PvP game plugin.
 commands:
   siegebound:
     description: Main command for Siegebound management
-    usage: /siegebound <call|end>
+    usage: /siegebound <call|end|setlocation>
     aliases: [sb]
 
 permissions:
   siegebound.use:
     description: Allows use of /siegebound commands
+    default: op
+  siegebound.admin:
+    description: Allows admin commands like setting locations
     default: op
