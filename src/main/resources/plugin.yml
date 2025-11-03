@@ -1,0 +1,17 @@
+name: Siegebound
+main: com.eastcompany.siegebound.SiegeboundPlugin
+version: 1.0.0
+api-version: 1.20
+author: YourName
+description: Team-based siege battle PvP game plugin.
+
+commands:
+  siegebound:
+    description: Main command for Siegebound management
+    usage: /siegebound <call|end>
+    aliases: [sb]
+
+permissions:
+  siegebound.use:
+    description: Allows use of /siegebound commands
+    default: op
