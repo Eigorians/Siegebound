@@ -1,7 +1,10 @@
 package com.eastcompany.siegebound;
 
+import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,6 +17,7 @@ public class Config {
 
     public static final Component PREFIX = Component.text("[Siegebound] ", NamedTextColor.GOLD);
     public static Location lobbylocation;
+    static World world;
 
     // 初期化：メインクラスから一度呼び出す
     public static void init(JavaPlugin pluginInstance) {
@@ -77,6 +81,21 @@ public class Config {
     // int取得（存在しなければデフォルト値）
     public static int getInt(String path, int def) {
         return get().getInt(path, def);
+    }
+    
+    public static World getworld() {
+    	 world = Bukkit.getWorld("Siegebound");
+ 		if(world == null) {
+ 			world = Bukkit.createWorld(WorldCreator.name("Siegebound"));
+ 			world.setAutoSave(false);
+ 		}
+ 		world.setGameRule(GameRule.DO_FIRE_TICK, false);
+			world.setGameRule(GameRule.FALL_DAMAGE, false);
+			world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+			world.setGameRule(GameRule.NATURAL_REGENERATION, false);
+			world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+			
+ 		return world;
     }
 
     // int保存

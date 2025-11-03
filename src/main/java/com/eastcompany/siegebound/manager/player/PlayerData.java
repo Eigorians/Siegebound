@@ -2,6 +2,8 @@ package com.eastcompany.siegebound.manager.player;
 
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
 import com.eastcompany.siegebound.SiegeboundPlugin;
@@ -36,4 +38,18 @@ public class PlayerData {
     public void setAlive(boolean alive) {
         this.alive = alive;
     }
+    
+    public void clearstatus() {
+    	Player player = Bukkit.getPlayer(uuid);
+    	if(player != null && player.isOnline()) {
+    		player.getInventory().clear();
+    		player.clearActivePotionEffects();
+    		player.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0.10000000149011612);
+    		player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20);
+    		player.setFoodLevel(20);  // 満腹度を最大に保つ
+            player.setSaturation(20f);
+            player.setHealth(20f);
+    	}
+    }
+
 }

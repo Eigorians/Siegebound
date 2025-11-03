@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,7 +21,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class SiegeboundCommand implements CommandExecutor, TabCompleter {
 
-    private final List<String> mainSubCommands = Arrays.asList("call", "end", "setlocation");
+    private final List<String> mainSubCommands = Arrays.asList("call", "end", "setlocation","teleport");
 
     // setlocation用に別クラスを用意しておく
     private final LocationCommand locationCommand = new LocationCommand();
@@ -52,9 +53,22 @@ public class SiegeboundCommand implements CommandExecutor, TabCompleter {
                         .append(Component.text("ロビーの座標が設定されていません。", NamedTextColor.RED)));
                     return true;
                 }
-                SiegeboundPlugin.getSiegeManager().getPlayerManager().addPlayer(new PlayerData(player));
                 
-                player.teleport(lobby);
+                for(Player pl : Bukkit.getOnlinePlayers()) {
+                	SiegeboundPlugin.getSiegeManager().InPreparation = true;
+                    
+                	 
+                    PlayerData data  = new PlayerData(pl);
+                    
+                    data.clearstatus();
+                    
+                    SiegeboundPlugin.getSiegeManager().getPlayerManager().addPlayer(data);
+                    
+                    pl.teleport(lobby);
+                    
+                    pl.sendMessage(Config.PREFIX.append(Component.text("準備期間・装備を設定して準備完了を押そう")));
+                }
+                
                 player.sendMessage(Component.text()
                     .append(Config.PREFIX)
                     .append(Component.text("ロビーにテレポートしました。", NamedTextColor.GREEN)));
@@ -77,6 +91,12 @@ public class SiegeboundCommand implements CommandExecutor, TabCompleter {
                 String[] subArgs = new String[args.length - 1];
                 System.arraycopy(args, 1, subArgs, 0, args.length - 1);
                 return locationCommand.onCommand(sender, command, label, subArgs);
+            case "teleport":
+            	if (sender instanceof Player player) {
+            		player.teleport(Config.getworld().getSpawnLocation());
+            	}
+            	
+            	break;
             default:
                 sender.sendMessage(Component.text()
                     .append(Config.PREFIX)
