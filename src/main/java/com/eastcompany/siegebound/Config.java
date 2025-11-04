@@ -13,105 +13,92 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class Config {
 
-    private static JavaPlugin plugin;
+	private static JavaPlugin plugin;
 
-    public static final Component PREFIX = Component.text("[Siegebound] ", NamedTextColor.GOLD);
-    public static Location lobbylocation;
-    static World world;
+	public static final Component PREFIX = Component.text("", NamedTextColor.WHITE)
+			.append(Component.text("Siegebound", NamedTextColor.GOLD))
+			.append(Component.text("] ", NamedTextColor.WHITE));
+	public static Location lobbylocation;
+	public static Location readyLocation;
+	public static World world;
 
-    // 初期化：メインクラスから一度呼び出す
-    public static void init(JavaPlugin pluginInstance) {
-        plugin = pluginInstance;
-        plugin.saveDefaultConfig();
-        reloadconfig();
-    }
+	// 初期化：メインクラスから一度呼び出す
+	public static void init(JavaPlugin pluginInstance) {
+		plugin = pluginInstance;
+		plugin.saveDefaultConfig();
+	}
 
-    public static FileConfiguration get() {
-        return plugin.getConfig();
-    }
+	public static FileConfiguration get() {
+		return plugin.getConfig();
+	}
 
-    public static void save() {
-        plugin.saveConfig();
-    }
-    
-    private static void reloadconfig() {
-    	 lobbylocation = getLocation("lobby");
-    }
+	public static void save() {
+		plugin.saveConfig();
+	}
 
-    public static void setLocation(String path, Location loc) {
-        FileConfiguration config = get();
-        config.set(path + ".world", loc.getWorld().getName());
-        config.set(path + ".x", loc.getX());
-        config.set(path + ".y", loc.getY());
-        config.set(path + ".z", loc.getZ());
-        config.set(path + ".yaw", loc.getYaw());
-        config.set(path + ".pitch", loc.getPitch());
-        save();
-        reloadconfig();
-    }
+	public static void reloadconfig() {
+		lobbylocation = getLocation("lobby");
+		readyLocation = getLocation("ready");
+	}
 
-    // 汎用的に座標を取得。存在しなければnull
-    public static Location getLocation(String path) {
-        FileConfiguration config = get();
-        if (!config.contains(path + ".world")) return null;
+	public static void setLocation(String path, Location loc) {
+		FileConfiguration config = get();
+		config.set(path, loc);
+		save();
+		reloadconfig();
+	}
 
-        World world = plugin.getServer().getWorld(config.getString(path + ".world"));
-        if (world == null) return null;
+	// 汎用的に座標を取得。存在しなければnull
+	public static Location getLocation(String path) {
+		FileConfiguration config = get();
+		return config.getLocation(path);
+	}
 
-        double x = config.getDouble(path + ".x");
-        double y = config.getDouble(path + ".y");
-        double z = config.getDouble(path + ".z");
-        float yaw = (float) config.getDouble(path + ".yaw", 0);
-        float pitch = (float) config.getDouble(path + ".pitch", 0);
+	// 文字列を取得（存在しなければデフォルト値を返す）
+	public static String getString(String path, String def) {
+		return get().getString(path, def);
+	}
 
-        return new Location(world, x, y, z, yaw, pitch);
-    }
+	// 文字列を保存
+	public static void setString(String path, String value) {
+		get().set(path, value);
+		save();
+	}
 
-    // 文字列を取得（存在しなければデフォルト値を返す）
-    public static String getString(String path, String def) {
-        return get().getString(path, def);
-    }
+	// int取得（存在しなければデフォルト値）
+	public static int getInt(String path, int def) {
+		return get().getInt(path, def);
+	}
 
-    // 文字列を保存
-    public static void setString(String path, String value) {
-        get().set(path, value);
-        save();
-    }
+	public static World getworld() {
+		world = Bukkit.getWorld("Siegebound");
+		if (world == null) {
+			world = Bukkit.createWorld(WorldCreator.name("Siegebound"));
+			world.setAutoSave(false);
+		}
+		world.setGameRule(GameRule.DO_FIRE_TICK, false);
+		world.setGameRule(GameRule.FALL_DAMAGE, false);
+		world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+		world.setGameRule(GameRule.NATURAL_REGENERATION, false);
+		world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
 
-    // int取得（存在しなければデフォルト値）
-    public static int getInt(String path, int def) {
-        return get().getInt(path, def);
-    }
-    
-    public static World getworld() {
-    	 world = Bukkit.getWorld("Siegebound");
- 		if(world == null) {
- 			world = Bukkit.createWorld(WorldCreator.name("Siegebound"));
- 			world.setAutoSave(false);
- 		}
- 		world.setGameRule(GameRule.DO_FIRE_TICK, false);
-			world.setGameRule(GameRule.FALL_DAMAGE, false);
-			world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-			world.setGameRule(GameRule.NATURAL_REGENERATION, false);
-			world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
-			
- 		return world;
-    }
+		return world;
+	}
 
-    // int保存
-    public static void setInt(String path, int value) {
-        get().set(path, value);
-        save();
-    }
+	// int保存
+	public static void setInt(String path, int value) {
+		get().set(path, value);
+		save();
+	}
 
-    // boolean取得
-    public static boolean getBoolean(String path, boolean def) {
-        return get().getBoolean(path, def);
-    }
+	// boolean取得
+	public static boolean getBoolean(String path, boolean def) {
+		return get().getBoolean(path, def);
+	}
 
-    // boolean保存
-    public static void setBoolean(String path, boolean value) {
-        get().set(path, value);
-        save();
-    }
+	// boolean保存
+	public static void setBoolean(String path, boolean value) {
+		get().set(path, value);
+		save();
+	}
 }

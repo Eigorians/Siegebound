@@ -7,17 +7,17 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 
 public class PlayerManager {
-    private final Map<UUID, PlayerData> playerDataMap = new HashMap<>();
+    private final Map<UUID, PlayerInstance> playerDataMap = new HashMap<>();
 
-    public void addPlayer(PlayerData data) {
+    public void addPlayer(PlayerInstance data) {
         playerDataMap.put(data.getUuid(), data);
     }
 
-    public PlayerData getPlayer(UUID uuid) {
+    public PlayerInstance getPlayer(UUID uuid) {
         return playerDataMap.get(uuid);
     }
     
-    public PlayerData getPlayer(Player player) {
+    public PlayerInstance getPlayer(Player player) {
         return playerDataMap.get(player.getUniqueId());
     }
 
@@ -29,7 +29,7 @@ public class PlayerManager {
         return playerDataMap.containsKey(uuid);
     }
 
-    public Map<UUID, PlayerData> getAllPlayers() {
+    public Map<UUID, PlayerInstance> getAllPlayers() {
         return playerDataMap;
     }
 }

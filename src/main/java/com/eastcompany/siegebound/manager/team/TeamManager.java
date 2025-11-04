@@ -12,77 +12,83 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class TeamManager {
 
-    private final Random random = new Random();
-    private final Scoreboard scoreboard;
-    private Team teamAttacker;
-    private Team teamDefender;
+	private final Random random = new Random();
+	private final Scoreboard scoreboard;
+	private Team teamAttacker;
+	private Team teamDefender;
 
-    public TeamManager() {
-        this.scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
-        createTeams();
-    }
+	public TeamManager() {
+		this.scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+		createTeams();
+	}
 
-    public void createTeams() {
-        if (scoreboard.getTeam("teamAttacker") != null) {
-            scoreboard.getTeam("teamAttacker").unregister();
-        }
-        if (scoreboard.getTeam("teamDefender") != null) {
-            scoreboard.getTeam("teamDefender").unregister();
-        }
+	public void createTeams() {
 
-        teamAttacker = scoreboard.registerNewTeam("teamAttacker");
-        teamDefender = scoreboard.registerNewTeam("teamDefender");
+		if (scoreboard.getTeam("teamAttacker") != null) {
+			scoreboard.getTeam("teamAttacker").unregister();
+		}
+		if (scoreboard.getTeam("teamDefender") != null) {
+			scoreboard.getTeam("teamDefender").unregister();
+		}
 
-        teamAttacker.color(NamedTextColor.RED);
-        teamDefender.color(NamedTextColor.BLUE);
+		teamAttacker = scoreboard.registerNewTeam("teamAttacker");
+		teamDefender = scoreboard.registerNewTeam("teamDefender");
 
-        teamAttacker.setAllowFriendlyFire(false);
-        teamDefender.setAllowFriendlyFire(false);
+		teamAttacker.color(NamedTextColor.RED);
+		teamDefender.color(NamedTextColor.BLUE);
 
-        teamAttacker.setCanSeeFriendlyInvisibles(true);
-        teamDefender.setCanSeeFriendlyInvisibles(true);
-    }
+		teamAttacker.setAllowFriendlyFire(false);
+		teamDefender.setAllowFriendlyFire(false);
 
-    public Team getTeamAttacker() {
-        return teamAttacker;
-    }
+		teamAttacker.setCanSeeFriendlyInvisibles(true);
+		teamDefender.setCanSeeFriendlyInvisibles(true);
 
-    public Team getTeamDefender() {
-        return teamDefender;
-    }
+		// プレフィックスを追加（色付きの文字列）
+		teamAttacker.prefix(net.kyori.adventure.text.Component.text("[攻撃] ").color(NamedTextColor.RED));
+		teamDefender.prefix(net.kyori.adventure.text.Component.text("[防衛] ").color(NamedTextColor.BLUE));
 
-    public Team getTeamWithLessPlayers() {
-        int attackerSize = teamAttacker.getSize();
-        int defenderSize = teamDefender.getSize();
+	}
 
-        if (attackerSize < defenderSize) {
-            return teamAttacker;
-        } else if (defenderSize < attackerSize) {
-            return teamDefender;
-        } else {
-            return random.nextBoolean() ? teamAttacker : teamDefender;
-        }
-    }
-    
-    public boolean isAttacker(Player player) {
-        return isAttacker(player.getUniqueId());
-    }
+	public Team getTeamAttacker() {
+		return teamAttacker;
+	}
 
-    public boolean isAttacker(UUID uuid) {
-        if (teamAttacker.hasEntry(uuid.toString())) {
-            return true;
-        }
-        return false;
-    }
+	public Team getTeamDefender() {
+		return teamDefender;
+	}
 
-    public boolean isDefender(Player player) {
-        return isDefender(player.getUniqueId());
-    }
+	public Team getTeamWithLessPlayers() {
+		int attackerSize = teamAttacker.getSize();
+		int defenderSize = teamDefender.getSize();
 
-    public boolean isDefender(UUID uuid) {
-        if (teamDefender.hasEntry(uuid.toString())) {
-            return true;
-        }
-        return false;
-    }
+		if (attackerSize < defenderSize) {
+			return teamAttacker;
+		} else if (defenderSize < attackerSize) {
+			return teamDefender;
+		} else {
+			return random.nextBoolean() ? teamAttacker : teamDefender;
+		}
+	}
+
+	public boolean isAttacker(Player player) {
+		return isAttacker(player.getUniqueId());
+	}
+
+	public boolean isAttacker(UUID uuid) {
+		if (teamAttacker.hasEntry(uuid.toString())) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isDefender(Player player) {
+		return isDefender(player.getUniqueId());
+	}
+
+	public boolean isDefender(UUID uuid) {
+		if (teamDefender.hasEntry(uuid.toString())) {
+			return true;
+		}
+		return false;
+	}
 }

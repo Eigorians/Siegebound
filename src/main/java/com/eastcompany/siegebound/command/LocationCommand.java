@@ -17,64 +17,64 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class LocationCommand implements CommandExecutor, org.bukkit.command.TabCompleter {
 
-    private final List<String> validKeys = Arrays.asList("lobby", "redbase", "bluebase");
+	private final List<String> validKeys = Arrays.asList("lobby", "redbase", "bluebase", "ready");
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(Component.text()
-                .append(Config.PREFIX)
-                .append(Component.text("このコマンドはプレイヤーのみ実行可能です。", NamedTextColor.RED)));
-            return true;
-        }
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		if (!(sender instanceof Player)) {
+			sender.sendMessage(Component.text()
+					.append(Config.PREFIX)
+					.append(Component.text("このコマンドはプレイヤーのみ実行可能です。", NamedTextColor.RED)));
+			return true;
+		}
 
-        if (!sender.hasPermission("siegebound.admin")) {
-            sender.sendMessage(Component.text()
-                .append(Config.PREFIX)
-                .append(Component.text("権限がありません。", NamedTextColor.RED)));
-            return true;
-        }
-        
-        if (args.length < 1) {
-            sender.sendMessage(Component.text()
-                .append(Config.PREFIX)
-                .append(Component.text("使い方: /siegebound setlocation <key>", NamedTextColor.YELLOW)));
-            return true;
-        }
+		if (!sender.hasPermission("siegebound.admin")) {
+			sender.sendMessage(Component.text()
+					.append(Config.PREFIX)
+					.append(Component.text("権限がありません。", NamedTextColor.RED)));
+			return true;
+		}
 
-        String key = args[0].toLowerCase();
+		if (args.length < 1) {
+			sender.sendMessage(Component.text()
+					.append(Config.PREFIX)
+					.append(Component.text("使い方: /siegebound setlocation <key>", NamedTextColor.YELLOW)));
+			return true;
+		}
 
-        if (!validKeys.contains(key)) {
-            sender.sendMessage(Component.text()
-                .append(Config.PREFIX)
-                .append(Component.text("無効なキーです。", NamedTextColor.RED)));
-            return true;
-        }
+		String key = args[0].toLowerCase();
 
-        Player player = (Player) sender;
-        Location loc = player.getLocation();
+		if (!validKeys.contains(key)) {
+			sender.sendMessage(Component.text()
+					.append(Config.PREFIX)
+					.append(Component.text("無効なキーです。", NamedTextColor.RED)));
+			return true;
+		}
 
-        Config.setLocation(key, loc);
+		Player player = (Player) sender;
+		Location loc = player.getLocation();
 
-        sender.sendMessage(Component.text()
-            .append(Config.PREFIX)
-            .append(Component.text(key + " の座標を設定しました。", NamedTextColor.GREEN)));
+		Config.setLocation(key, loc);
 
-        return true;
-    }
+		sender.sendMessage(Component.text()
+				.append(Config.PREFIX)
+				.append(Component.text(key + " の座標を設定しました。", NamedTextColor.GREEN)));
 
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        List<String> completions = new ArrayList<>();
+		return true;
+	}
 
-        if (args.length == 1) {
-            for (String key : validKeys) {
-                if (key.startsWith(args[0].toLowerCase())) {
-                    completions.add(key);
-                }
-            }
-        }
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+		List<String> completions = new ArrayList<>();
 
-        return completions;
-    }
+		if (args.length == 1) {
+			for (String key : validKeys) {
+				if (key.startsWith(args[0].toLowerCase())) {
+					completions.add(key);
+				}
+			}
+		}
+
+		return completions;
+	}
 }
