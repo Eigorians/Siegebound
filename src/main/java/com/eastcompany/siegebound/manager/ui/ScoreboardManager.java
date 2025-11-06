@@ -20,22 +20,32 @@ public class ScoreboardManager {
 	@SuppressWarnings("deprecation")
 	private void setupScoreboard() {
 		scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+
+		// 既存のObjectiveを削除してから登録
+		Objective old = scoreboard.getObjective("siegebound");
+		if (old != null) {
+			old.unregister();
+		}
+
 		objective = scoreboard.registerNewObjective(
 				"siegebound",
 				"dummy",
-				Component.text("SiegeBound") // タイトルをつけるとわかりやすい
+				Component.text("SiegeBound") // サイドバータイトル
 		);
 
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 	}
 
 	public void updateReadyStatus(int readyCount, int totalPlayers) {
+		// まず古いスコアをクリア
+		for (String entry : scoreboard.getEntries()) {
+			scoreboard.resetScores(entry);
+		}
+
 		int line = 3;
 		objective.getScore("§7準備中").setScore(line--);
 		objective.getScore("準備完了: §a" + readyCount + " §7/ " + totalPlayers).setScore(line--);
 		objective.getScore(" ").setScore(line--); // 空行
-
-		// 一番上にタイトルが表示される（objective名）
 	}
 
 	public void clearForPlayer(Player player) {
@@ -45,6 +55,7 @@ public class ScoreboardManager {
 	public void deleteScoreboard() {
 		if (objective != null) {
 			objective.unregister();
+			objective = null;
 		}
 	}
 }

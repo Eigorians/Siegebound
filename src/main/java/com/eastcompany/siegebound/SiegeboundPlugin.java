@@ -25,6 +25,7 @@ public class SiegeboundPlugin extends JavaPlugin {
 		this.getCommand("siegebound").setExecutor(new SiegeboundCommand());
 		//有効化メッセージ
 		Bukkit.broadcast(Config.PREFIX.append(Component.text("シージバウンド有効化", NamedTextColor.WHITE)));
+		Config.getworld();
 	}
 
 	@Override
@@ -36,12 +37,29 @@ public class SiegeboundPlugin extends JavaPlugin {
 
 	}
 
+	public static boolean isgamestarted() {
+		if (siegeManager != null && (siegeManager.isgamestarted || siegeManager.InPreparation)) {
+			return true;
+		}
+		return false;
+	}
+
 	public static SiegeManager getSiegeManager() {
 		return siegeManager;
 	}
 
 	public static void createNewGame() {
+		if (siegeManager != null) {
+			siegeManager.end();
+		}
 		siegeManager = new SiegeManager();
+	}
+
+	public static void endGame() {
+		if (siegeManager != null) {
+			siegeManager.end();
+			siegeManager = null;
+		}
 	}
 
 	public static SiegeboundPlugin getInstance() {

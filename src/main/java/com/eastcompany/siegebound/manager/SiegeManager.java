@@ -9,17 +9,19 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.eastcompany.siegebound.Config;
+import com.eastcompany.siegebound.listener.EventsManager;
 import com.eastcompany.siegebound.manager.player.PlayerManager;
+import com.eastcompany.siegebound.manager.process.Starting;
 import com.eastcompany.siegebound.manager.team.TeamManager;
 import com.eastcompany.siegebound.manager.ui.ScoreboardManager;
-import com.eastcompany.siegebound.manager.ui.TextDisplayManager;
 
 public class SiegeManager {
 
 	private final PlayerManager playerManager;
 	private final TeamManager teamManager;
 	private final ScoreboardManager scoreboardManager;
-	private TextDisplayManager textDisplayManager;
+	private final EventsManager eventsManager;
+	private final Starting starting;
 
 	public boolean isgamestarted = false;
 
@@ -27,10 +29,15 @@ public class SiegeManager {
 
 	static List<UUID> entities = new ArrayList<UUID>();
 
+	static List<Integer> tasks = new ArrayList<Integer>();
+
 	public SiegeManager() {
 		this.playerManager = new PlayerManager();
 		this.teamManager = new TeamManager();
 		this.scoreboardManager = new ScoreboardManager();
+		this.eventsManager = new EventsManager();
+		this.starting = new Starting();
+		eventsManager.loadEvents();
 		Config.getworld();
 		Config.reloadconfig();
 	}
@@ -43,20 +50,30 @@ public class SiegeManager {
 		return teamManager;
 	}
 
+	public Starting getStartingManager() {
+		return starting;
+	}
+
 	public ScoreboardManager getScoreboardManager() {
 		return scoreboardManager;
 	}
 
-	public void updatescore(int playercount) {
+	public void updateScore(int playercount) {
 		scoreboardManager.updateReadyStatus(playercount, playerManager.getAllPlayers().size());
 	}
 
-	public static void addentity(Entity entity) {
+	public static void addEntity(Entity entity) {
+		entity.addScoreboardTag("SiegeBound");
 		entities.add(entity.getUniqueId());
+	}
+
+	public static void addTask(Integer taskid) {
+		tasks.add(taskid);
 	}
 
 	public void end() {
 		scoreboardManager.deleteScoreboard();
+
 		if (teamManager.getTeamAttacker() != null) {
 			teamManager.getTeamAttacker().unregister();
 		}
@@ -78,6 +95,12 @@ public class SiegeManager {
 				entity.remove();
 			}
 		}
+
+		for (int task : tasks) {
+			Bukkit.getScheduler().cancelTask(task);
+		}
+
+		eventsManager.unregisterEvents();
 
 		Bukkit.unloadWorld(Config.getworld(), false);
 	}

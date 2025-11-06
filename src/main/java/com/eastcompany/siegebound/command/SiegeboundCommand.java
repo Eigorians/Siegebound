@@ -7,16 +7,19 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.eastcompany.siegebound.Config;
 import com.eastcompany.siegebound.SiegeboundPlugin;
 import com.eastcompany.siegebound.manager.player.PlayerInstance;
+import com.eastcompany.siegebound.manager.ui.TextDisplayManager;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -42,13 +45,22 @@ public class SiegeboundCommand implements CommandExecutor, TabCompleter {
 		switch (sub) {
 		case "call":
 			if (sender instanceof Player player) {
+				if (SiegeboundPlugin.isgamestarted()) {
+					player.sendMessage(Component.text()
+							.append(Config.PREFIX)
+							.append(Component.text("ゲームはすでに始まっています。/siegebound endで停止してください", NamedTextColor.RED)));
+
+					return true;
+				}
+				Config.getworld();
 				sender.sendMessage(Component.text()
 						.append(Config.PREFIX)
 						.append(Component.text("Siegeboundの準備を開始します。", NamedTextColor.GREEN)));
 
-				SiegeboundPlugin.createNewGame();
+				Config.reloadconfig();
 
 				Location lobby = Config.lobbylocation; // もしくは Config.lobbylocation
+
 				if (lobby == null) {
 					player.sendMessage(Component.text()
 							.append(Config.PREFIX)
@@ -56,20 +68,39 @@ public class SiegeboundCommand implements CommandExecutor, TabCompleter {
 					return true;
 				}
 
+				Location loc = Config.getLocation("ready");
+
+				if (loc == null) {
+					player.sendMessage(Component.text()
+							.append(Config.PREFIX)
+							.append(Component.text("Config.readyLocation が null のため、表示を作成できません。", NamedTextColor.RED)));
+					return true;
+				}
+
+				SiegeboundPlugin.createNewGame();
+
 				SiegeboundPlugin.getSiegeManager().InPreparation = true;
 
 				World world = player.getWorld();
 
+				ItemStack itemStack = new ItemStack(Material.ITEM_FRAME);
+
 				for (Player pl : Bukkit.getOnlinePlayers()) {
 					if (pl.getWorld().equals(world) && !(pl.getGameMode().equals(GameMode.SPECTATOR))) {
 						PlayerInstance data = new PlayerInstance(pl);
-						SiegeboundPlugin.getSiegeManager().getPlayerManager().addPlayer(data);
-						pl.teleport(lobby);
+						data.setGamemode(GameMode.SURVIVAL);
+						Bukkit.getScheduler().runTaskLater(SiegeboundPlugin.getInstance(), () -> {
+							pl.teleport(lobby);
+						}, 20L);
 						pl.sendMessage(Config.PREFIX.append(Component.text("準備期間・装備を設定して準備完了を押そう")));
+
+						TextDisplayManager.create("ready", pl, loc,
+								Component.text("[右クリックで準備完了！]", NamedTextColor.YELLOW), itemStack);
+
 					}
 				}
 
-				SiegeboundPlugin.getSiegeManager().updatescore(0);
+				SiegeboundPlugin.getSiegeManager().updateScore(0);
 
 				player.sendMessage(Component.text()
 						.append(Config.PREFIX)
@@ -86,6 +117,7 @@ public class SiegeboundCommand implements CommandExecutor, TabCompleter {
 			sender.sendMessage(Component.text()
 					.append(Config.PREFIX)
 					.append(Component.text("Siegeboundの試合を終了します。", NamedTextColor.GREEN)));
+			SiegeboundPlugin.endGame();
 			break;
 		case "setlocation":
 			// setlocationの処理は別クラスに委譲
@@ -108,6 +140,7 @@ public class SiegeboundCommand implements CommandExecutor, TabCompleter {
 			break;
 		}
 		return true;
+
 	}
 
 	@Override

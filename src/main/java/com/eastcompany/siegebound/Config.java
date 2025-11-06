@@ -8,6 +8,8 @@ import org.bukkit.WorldCreator;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.eastcompany.siegebound.manager.ui.TextDisplayManager;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -19,7 +21,7 @@ public class Config {
 			.append(Component.text("Siegebound", NamedTextColor.GOLD))
 			.append(Component.text("] ", NamedTextColor.WHITE));
 	public static Location lobbylocation;
-	public static Location readyLocation;
+
 	public static World world;
 
 	// 初期化：メインクラスから一度呼び出す
@@ -37,8 +39,16 @@ public class Config {
 	}
 
 	public static void reloadconfig() {
+		getworld();
 		lobbylocation = getLocation("lobby");
-		readyLocation = getLocation("ready");
+
+		Location readyLoc = getLocation("ready");
+		if (readyLoc != null) {
+			readyLoc = readyLoc.clone().add(0, 1, 0);
+			TextDisplayManager.adddisplaylocation("ready", readyLoc);
+		} else {
+			TextDisplayManager.removeByID("ready"); // nullだった場合は削除
+		}
 	}
 
 	public static void setLocation(String path, Location loc) {
@@ -74,8 +84,8 @@ public class Config {
 		world = Bukkit.getWorld("Siegebound");
 		if (world == null) {
 			world = Bukkit.createWorld(WorldCreator.name("Siegebound"));
-			world.setAutoSave(false);
 		}
+		world.setAutoSave(false);
 		world.setGameRule(GameRule.DO_FIRE_TICK, false);
 		world.setGameRule(GameRule.FALL_DAMAGE, false);
 		world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);

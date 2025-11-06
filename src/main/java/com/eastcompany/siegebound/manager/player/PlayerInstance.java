@@ -3,6 +3,7 @@ package com.eastcompany.siegebound.manager.player;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
@@ -12,12 +13,14 @@ public class PlayerInstance {
 	private final UUID uuid;
 	private String kit;
 	private boolean alive;
+	private GameMode gameMode;
 
 	public PlayerInstance(Player player) {
 		this.uuid = player.getUniqueId();
 		this.alive = true;
 		clearstatus();
 		SiegeboundPlugin.getSiegeManager().getTeamManager().getTeamWithLessPlayers().addEntity(player);
+		SiegeboundPlugin.getSiegeManager().getPlayerManager().addPlayer(this);
 	}
 
 	public UUID getUuid() {
@@ -38,6 +41,30 @@ public class PlayerInstance {
 
 	public void setAlive(boolean alive) {
 		this.alive = alive;
+	}
+
+	public void setGamemode(GameMode gameMode) {
+		this.gameMode = gameMode;
+
+		Player player = getplayer();
+
+		if (player != null && player.isOnline()) {
+			player.setGameMode(gameMode);
+		}
+	}
+
+	public void loadGamemode() {
+		Player player = getplayer();
+
+		if (player != null && player.isOnline()) {
+			player.setGameMode(gameMode);
+		}
+	}
+
+	private Player getplayer() {
+		Player player = Bukkit.getPlayer(uuid);
+		return player;
+
 	}
 
 	public void clearstatus() {

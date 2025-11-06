@@ -1,51 +1,94 @@
 package com.eastcompany.siegebound.manager.ui;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import com.eastcompany.siegebound.manager.SiegeManager;
 
 import net.kyori.adventure.text.Component;
 
 public class TextDisplayManager {
 
-	private static final Map<String, TextDisplayInstance> displays = new HashMap<>();
+	private static final Map<DisplayKey, TextDisplayInstance> displays = new HashMap<>();
 
-	/**
-	 * 新しいDisplayを生成・登録
-	 * 
-	 * @param id        一意のID（重複時は上書き）
-	 * @param location  表示位置
-	 * @param message   テキスト
-	 * @param itemStack アイテム（null可）
-	 * @return 作成されたTextDisplayInstance
-	 */
+	private static Map<UUID, String> clickbox = new HashMap<UUID, String>();
 
-	public static TextDisplayInstance create(String id, Location location, Component message, ItemStack itemStack) {
+	public static void adddisplaylocation(String string, Location location) {
+
+		World world = location.getWorld();
+
+		ArmorStand clickHitbox = world.spawn(location.clone().add(0, -0.5, 0), ArmorStand.class, stand -> {
+
+			stand.setPersistent(false);
+			stand.setGravity(false);
+			stand.setInvisible(true);
+
+		});
+		SiegeManager.addEntity(clickHitbox);
+
+		clickbox.put(clickHitbox.getUniqueId(), string);
+	}
+
+	public static TextDisplayInstance create(String id, Player player, Location location, Component message,
+			ItemStack itemStack) {
+
+		DisplayKey key = new DisplayKey(id, player.getUniqueId());
 
 		// 既に同じIDが存在する場合は削除して置き換え
-		if (displays.containsKey(id)) {
-			displays.get(id).remove();
+		if (displays.containsKey(key)) {
+			displays.get(key).remove();
 		}
-		TextDisplayInstance display = new TextDisplayInstance(location, message, itemStack);
-		displays.put(id, display);
+		TextDisplayInstance display = new TextDisplayInstance(player, location, message, itemStack);
+		displays.put(key, display);
+
 		return display;
 	}
 
-	/** ID指定で削除 */
-	public static void remove(String id) {
-		TextDisplayInstance display = displays.remove(id);
-		if (display != null) {
-			display.remove();
+	public static TextDisplayInstance getDisplayFromArmorStand(Player player, Entity entity) {
+		String id = clickbox.get(entity.getUniqueId());
+		if (id == null)
+			return null;
+		return displays.get(new DisplayKey(id, player.getUniqueId()));
+	}
+
+	public static TextDisplayInstance getdisplay(String id, Player player) {
+		return displays.get(new DisplayKey(id, player.getUniqueId()));
+	}
+
+	public static void removeByID(String id) {
+		// 消す対象をまず全部集める
+		List<DisplayKey> keysToRemove = new ArrayList<>();
+
+		for (Entry<DisplayKey, TextDisplayInstance> entry : displays.entrySet()) {
+			if (entry.getKey().getText().equals(id)) {
+				// 表示本体を消す処理があるなら先に呼んでおく
+				entry.getValue().remove();
+				keysToRemove.add(entry.getKey());
+			}
+		}
+
+		// まとめて削除
+		for (DisplayKey key : keysToRemove) {
+			displays.remove(key);
 		}
 	}
 
-	/** インスタンス指定で削除（IDがわかっている場合は上を使う） */
-	public static void remove(TextDisplayInstance display) {
-		displays.values().remove(display);
-		display.remove();
+	public static void updateDisplay(Player player) {
+		for (Entry<DisplayKey, TextDisplayInstance> map : displays.entrySet()) {
+			map.getValue().hideFromAllExcept();
+		}
 	}
 
 	/** 全削除 */
@@ -54,33 +97,21 @@ public class TextDisplayManager {
 			display.remove();
 		}
 		displays.clear();
-	}
-
-	/** IDで取得 */
-	public static TextDisplayInstance get(String id) {
-		return displays.get(id);
-	}
-
-	/** 全件取得（読み取り専用） */
-	public static Map<String, TextDisplayInstance> getAll() {
-		return Collections.unmodifiableMap(displays);
-	}
-
-	/** 全体を移動（相対オフセット） */
-	public static void moveAll(double x, double y, double z) {
-		for (TextDisplayInstance display : displays.values()) {
-			Location newLoc = display.getBaseLocation().add(x, y, z);
-			display.moveTo(newLoc);
+		for (UUID uuid : clickbox.keySet()) {
+			Entity entity = Bukkit.getEntity(uuid);
+			if (entity != null) {
+				entity.remove();
+			}
 		}
+		clickbox.clear();
 	}
 
-	/** 登録数を取得 */
-	public static int size() {
-		return displays.size();
+	public static boolean isHitbox(Entity entity) {
+		return clickbox.containsKey(entity.getUniqueId());
 	}
 
-	/** 指定IDが存在するか */
-	public static boolean contains(String id) {
-		return displays.containsKey(id);
+	public static String getHitboxId(Entity clicked) {
+		return clickbox.get(clicked.getUniqueId());
 	}
+
 }
