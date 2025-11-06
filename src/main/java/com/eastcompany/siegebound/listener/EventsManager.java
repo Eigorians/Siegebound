@@ -13,13 +13,14 @@ public class EventsManager {
 	List<Listener> events = new ArrayList<Listener>();
 
 	public void loadEvents() {
+		register(new BlockDisplayListener());
+		register(new DropEvents());
+	}
 
+	private void register(Listener listener) {
 		SiegeboundPlugin main = SiegeboundPlugin.getInstance();
-
-		BlockDisplayListener blockDisplayClickListener = new BlockDisplayListener();
-
-		main.getServer().getPluginManager().registerEvents(blockDisplayClickListener, main);
-		events.add(blockDisplayClickListener);
+		main.getServer().getPluginManager().registerEvents(listener, main);
+		events.add(listener);
 	}
 
 	public void unregisterEvents() {

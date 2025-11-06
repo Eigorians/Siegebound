@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.eastcompany.siegebound.command.SiegeboundCommand;
 import com.eastcompany.siegebound.manager.SiegeManager;
+import com.eastcompany.siegebound.manager.kit.KitManager;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -26,6 +27,7 @@ public class SiegeboundPlugin extends JavaPlugin {
 		//有効化メッセージ
 		Bukkit.broadcast(Config.PREFIX.append(Component.text("シージバウンド有効化", NamedTextColor.WHITE)));
 		Config.getworld();
+		KitManager.setup();
 	}
 
 	@Override

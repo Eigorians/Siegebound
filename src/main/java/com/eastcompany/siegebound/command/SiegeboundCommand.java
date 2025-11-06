@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.eastcompany.siegebound.Config;
 import com.eastcompany.siegebound.SiegeboundPlugin;
+import com.eastcompany.siegebound.manager.kit.KitManager;
 import com.eastcompany.siegebound.manager.player.PlayerInstance;
 import com.eastcompany.siegebound.manager.ui.TextDisplayManager;
 
@@ -99,6 +100,8 @@ public class SiegeboundCommand implements CommandExecutor, TabCompleter {
 
 					}
 				}
+
+				KitManager.createKit();
 
 				SiegeboundPlugin.getSiegeManager().updateScore(0);
 

@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import com.eastcompany.siegebound.SiegeboundPlugin;
 
@@ -48,6 +49,11 @@ public class PlayerManager {
 		}
 
 		return players;
+	}
+
+	public boolean contains(@NotNull Player player) {
+		contains(player.getUniqueId());
+		return false;
 	}
 
 }

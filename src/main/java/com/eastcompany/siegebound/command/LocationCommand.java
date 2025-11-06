@@ -17,7 +17,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class LocationCommand implements CommandExecutor, org.bukkit.command.TabCompleter {
 
-	private final List<String> validKeys = Arrays.asList("lobby", "redbase", "bluebase", "ready");
+	private final List<String> validKeys = Arrays.asList("lobby", "attackerbase", "defenderbase", "ready", "kit");
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
