@@ -59,7 +59,7 @@ public class SiegeManager {
 	}
 
 	public void updateScore(int playercount) {
-		scoreboardManager.updateReadyStatus(playercount, playerManager.getAllPlayers().size());
+		scoreboardManager.updateReadyStatus(playercount, PlayerManager.getAllPlayers().size());
 	}
 
 	public static void addEntity(Entity entity) {

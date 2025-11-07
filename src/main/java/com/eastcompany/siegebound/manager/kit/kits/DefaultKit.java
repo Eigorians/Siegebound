@@ -41,12 +41,11 @@ public class DefaultKit {
 
 		ItemStack[] contents = player.getInventory().getContents();
 		for (ItemStack stack : contents) {
-			if (stack == null)
+			if (stack == null || stack.getType() == Material.AIR)
 				continue;
 
-			Material mat = stack.getType();
 			for (KitItem kit : kits) {
-				if (kit.getMaterial() == mat)
+				if (kit.getItem() == stack)
 					return kit;
 			}
 		}

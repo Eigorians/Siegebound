@@ -17,7 +17,7 @@ public class Config {
 
 	private static JavaPlugin plugin;
 
-	public static final Component PREFIX = Component.text("", NamedTextColor.WHITE)
+	public static final Component PREFIX = Component.text("[", NamedTextColor.WHITE)
 			.append(Component.text("Siegebound", NamedTextColor.GOLD))
 			.append(Component.text("] ", NamedTextColor.WHITE));
 	public static Location lobbylocation;
@@ -44,7 +44,6 @@ public class Config {
 
 		Location readyLoc = getLocation("ready");
 		if (readyLoc != null) {
-			readyLoc = readyLoc.clone().add(0, 1, 0);
 			TextDisplayManager.adddisplaylocation("ready", readyLoc);
 		} else {
 			TextDisplayManager.removeByID("ready"); // nullだった場合は削除

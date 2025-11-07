@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.eastcompany.siegebound.SiegeboundPlugin;
 import com.eastcompany.siegebound.manager.SiegeManager;
+import com.eastcompany.siegebound.manager.player.PlayerManager;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -70,7 +71,7 @@ public class Starting {
 					if (ready.size() < maxplayer) {
 						stopCountdownIfRunning();
 
-						for (Player p : SiegeboundPlugin.getSiegeManager().getPlayerManager().getAllPlayers()) {
+						for (Player p : PlayerManager.getAllPlayers()) {
 							p.showTitle(Title.title(
 									Component.text("カウントダウン中止").color(NamedTextColor.RED),
 									Component.text("人数が減りました").color(NamedTextColor.GRAY)));
@@ -83,7 +84,7 @@ public class Starting {
 					if (countdownSeconds <= 0) {
 						stopCountdownIfRunning();
 
-						for (Player p : SiegeboundPlugin.getSiegeManager().getPlayerManager().getAllPlayers()) {
+						for (Player p : PlayerManager.getAllPlayers()) {
 							p.showTitle(Title.title(
 									Component.text("開始！").color(NamedTextColor.GOLD),
 									Component.empty()));
@@ -95,7 +96,7 @@ public class Starting {
 
 					// カウントダウン表示
 					// カウントダウン表示
-					for (Player p : SiegeboundPlugin.getSiegeManager().getPlayerManager().getAllPlayers()) {
+					for (Player p : PlayerManager.getAllPlayers()) {
 
 						// 10秒の瞬間だけメッセージ送信
 						if (countdownSeconds == 10) {

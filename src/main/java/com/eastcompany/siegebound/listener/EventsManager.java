@@ -15,6 +15,7 @@ public class EventsManager {
 	public void loadEvents() {
 		register(new BlockDisplayListener());
 		register(new DropEvents());
+		register(new KitClickGUI());
 	}
 
 	private void register(Listener listener) {

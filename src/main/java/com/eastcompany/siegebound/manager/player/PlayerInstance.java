@@ -20,7 +20,7 @@ public class PlayerInstance {
 		this.alive = true;
 		clearstatus();
 		SiegeboundPlugin.getSiegeManager().getTeamManager().getTeamWithLessPlayers().addEntity(player);
-		SiegeboundPlugin.getSiegeManager().getPlayerManager().addPlayer(this);
+		PlayerManager.addPlayer(this);
 	}
 
 	public UUID getUuid() {

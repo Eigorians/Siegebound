@@ -17,7 +17,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class LocationCommand implements CommandExecutor, org.bukkit.command.TabCompleter {
 
-	private final List<String> validKeys = Arrays.asList("lobby", "attackerbase", "defenderbase", "ready", "kit");
+	private static List<String> validKeys = new ArrayList<>(
+			Arrays.asList("lobby", "attackerbase", "defenderbase", "ready", "kitselector", "kitcreator"));
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -61,6 +62,10 @@ public class LocationCommand implements CommandExecutor, org.bukkit.command.TabC
 				.append(Component.text(key + " の座標を設定しました。", NamedTextColor.GREEN)));
 
 		return true;
+	}
+
+	public static void addLocation(String string) {
+		validKeys.add(string);
 	}
 
 	@Override

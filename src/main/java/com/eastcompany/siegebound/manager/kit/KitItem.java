@@ -6,13 +6,13 @@ import org.bukkit.inventory.ItemStack;
 public class KitItem {
 
 	private final ItemStack item;
-	private final Material material;
+	private final Material icon;
 	private final String name;
 	private final int point;
 
-	public KitItem(Material material, String name, int point) {
-		this.material = material;
-		this.item = new ItemStack(material);
+	public KitItem(Material icon, String name, int point, ItemStack item) {
+		this.icon = icon;
+		this.item = item;
 		this.name = name;
 		this.point = point;
 	}
@@ -29,7 +29,8 @@ public class KitItem {
 		return point;
 	}
 
-	public Material getMaterial() {
-		return material;
+	public ItemStack getIcon() {
+		return new ItemStack(icon);
 	}
+
 }

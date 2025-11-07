@@ -101,7 +101,7 @@ public class SiegeboundCommand implements CommandExecutor, TabCompleter {
 					}
 				}
 
-				KitManager.createKit();
+				KitManager.loadKitSelector();
 
 				SiegeboundPlugin.getSiegeManager().updateScore(0);
 

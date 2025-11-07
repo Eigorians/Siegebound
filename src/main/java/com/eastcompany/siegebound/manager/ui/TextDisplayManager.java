@@ -15,6 +15,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.eastcompany.siegebound.SiegeboundPlugin;
 import com.eastcompany.siegebound.manager.SiegeManager;
 
 import net.kyori.adventure.text.Component;
@@ -29,11 +30,13 @@ public class TextDisplayManager {
 
 		World world = location.getWorld();
 
-		ArmorStand clickHitbox = world.spawn(location.clone().add(0, -0.5, 0), ArmorStand.class, stand -> {
+		ArmorStand clickHitbox = world.spawn(location.clone().add(0, 0.5, 0), ArmorStand.class, stand -> {
 
 			stand.setPersistent(false);
 			stand.setGravity(false);
-			stand.setInvisible(true);
+			if (!SiegeboundPlugin.debug) {
+				stand.setInvisible(true);
+			}
 
 		});
 		SiegeManager.addEntity(clickHitbox);

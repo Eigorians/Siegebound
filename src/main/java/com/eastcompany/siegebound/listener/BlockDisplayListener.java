@@ -68,11 +68,8 @@ public class BlockDisplayListener implements Listener {
 		if (baseId == null)
 			return false;
 
-		String id = baseId + "." + player.getUniqueId();
-
 		// ---- クリック動作 ----
 		if (baseId.startsWith("ready")) {
-
 			boolean b;
 			if (type == ClickType.RIGHT) {
 				player.playSound(
@@ -97,8 +94,16 @@ public class BlockDisplayListener implements Listener {
 					instance.setItem(new ItemStack(Material.ITEM_FRAME));
 				}
 			}
-		} else {
-			player.sendMessage("クリックされたディスプレイ: " + id + "（" + type.name() + "クリック）");
+		} else if (baseId.startsWith("kitselector")) {
+
+			SiegeboundPlugin.getGUI().openJobSelectionGui(player);
+
+		} else if (baseId.startsWith("kitcreator")) {
+
+			SiegeboundPlugin.getGUI().createJob(player);
+		}
+		if (!SiegeboundPlugin.debug) {
+			player.sendMessage("Debug クリックされたディスプレイ: " + baseId + "（" + type.name() + "クリック）");
 		}
 		return true;
 	}
@@ -106,6 +111,7 @@ public class BlockDisplayListener implements Listener {
 	/** クリックの種類を区別するための簡易enum */
 	private enum ClickType {
 		LEFT, RIGHT
+
 	}
 
 	@EventHandler
